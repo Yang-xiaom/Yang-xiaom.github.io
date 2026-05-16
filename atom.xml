@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <author>
+    <name>小明今天没事</name>
+  </author>
+  <generator uri="https://hexo.io/">Hexo</generator>
+  <icon>http://xiaom68.com/img/avatar.png</icon>
+  <id>http://xiaom68.com/</id>
+  <link href="http://xiaom68.com/" rel="alternate"/>
+  <link href="http://xiaom68.com/atom.xml" rel="self"/>
+  <rights>All rights reserved 2026, 小明今天没事</rights>
+  <subtitle>我需要一把平静的刀来斩断欲望</subtitle>
+  <title>儿童公园</title>
+  <updated>2026-05-16T15:19:33.840Z</updated>
+  <entry>
+    <author>
+      <name>小明今天没事</name>
+    </author>
+    <id>http://xiaom68.com/2026/05/16/hello-world/</id>
+    <link href="http://xiaom68.com/2026/05/16/hello-world/"/>
+    <published>2026-05-16T15:19:33.840Z</published>
+    <summary>
+      <![CDATA[<p>Welcome to <a href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/">documentation</a>]]>
+    </summary>
+    <title>Hello World</title>
+    <updated>2026-05-16T15:19:33.840Z</updated>
+  </entry>
+</feed>

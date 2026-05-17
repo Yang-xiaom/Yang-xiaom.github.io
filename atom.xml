@@ -10,21 +10,25 @@
   <rights>All rights reserved 2026, 小明今天没事</rights>
   <subtitle>我需要一把平静的刀来斩断欲望</subtitle>
   <title>儿童公园</title>
-  <updated>2026-05-17T01:56:47.731Z</updated>
+  <updated>2026-05-17T02:49:39.838Z</updated>
   <entry>
     <author>
       <name>小明今天没事</name>
     </author>
+    <category term="简历项目" scheme="http://xiaom68.com/categories/%E7%AE%80%E5%8E%86%E9%A1%B9%E7%9B%AE/"/>
+    <category term="Java" scheme="http://xiaom68.com/tags/Java/"/>
+    <category term="Redis" scheme="http://xiaom68.com/tags/Redis/"/>
+    <category term="黑马点评" scheme="http://xiaom68.com/tags/%E9%BB%91%E9%A9%AC%E7%82%B9%E8%AF%84/"/>
     <content>
-      <![CDATA[<p>#秒杀防超卖和一人一单 </p>]]>
+      <![CDATA[<h1 id="秒杀防超卖和一人一单"><a href="#秒杀防超卖和一人一单" class="headerlink" title="秒杀防超卖和一人一单"></a>秒杀防超卖和一人一单</h1><p>    首先使用 <strong>redis</strong> 存储库存和订单信息，即提前将优惠券的库存缓存到 <strong>redis</strong> 里面，使用 <strong>redis</strong> 的原子操作 <strong>DECR</strong> 或 <strong>DECRBY</strong> 来扣减库存（在<strong>项目启动时</strong>查询数据库中所有有效优惠券库存，批量提前存入 <strong>redis</strong> 做预热缓存，写一个类实现 <strong>CommandLineRunner</strong>，加上 <strong>@Component</strong>，项目启动自动执行，把数据库库存查出来写入 redis）。以<strong>优惠券 id</strong> 作为 <strong>Set</strong> 的键，集合中存放已购买<strong>用户 id</strong>，依靠 Set 去重特性，确保单个用户只能购买一次。   </p><p>    <strong>判断库存 + 判断用户是否下单 + 扣库存 + 记录用户</strong>这 4 步必须是<strong>原子操作</strong>，不能被其他线程打断，否则会超卖、重复下单。Lua 脚本 &#x3D; 一整段逻辑在 Redis 单线程执行，原子性，不会出现并发安全问题。示意代码如下：</p><figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 1. 获取参数</span></span><br><span class="line"><span class="keyword">local</span> voucherId = ARGV[<span class="number">1</span>]</span><br><span class="line"><span class="keyword">local</span> userId = ARGV[<span class="number">2</span>]</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 2. 拼接key</span></span><br><span class="line"><span class="keyword">local</span> stockKey = <span class="string">&#x27;coupon:stock:&#x27;</span> .. voucherId</span><br><span class="line"><span class="keyword">local</span> orderKey = <span class="string">&#x27;coupon:order:record:&#x27;</span> .. voucherId</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 3. 判断用户是否已经下单</span></span><br><span class="line"><span class="keyword">if</span> redis.call(<span class="string">&#x27;sismember&#x27;</span>, orderKey, userId) == <span class="number">1</span> <span class="keyword">then</span></span><br><span class="line">    <span class="keyword">return</span> <span class="number">1</span>  <span class="comment">-- 用户已下单，禁止重复购买</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="comment">-- 4. 判断库存是否充足</span></span><br><span class="line"><span class="keyword">local</span> stock = <span class="built_in">tonumber</span>(redis.call(<span class="string">&#x27;get&#x27;</span>, stockKey))</span><br><span class="line"><span class="keyword">if</span> stock &lt;= <span class="number">0</span> <span class="keyword">then</span></span><br><span class="line">    <span class="keyword">return</span> <span class="number">2</span>  <span class="comment">-- 库存不足</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="comment">-- 5. 扣库存 + 记录用户</span></span><br><span class="line">redis.call(<span class="string">&#x27;decr&#x27;</span>, stockKey)</span><br><span class="line">redis.call(<span class="string">&#x27;sadd&#x27;</span>, orderKey, userId)</span><br><span class="line"></span><br><span class="line"><span class="keyword">return</span> <span class="number">0</span>  <span class="comment">-- 0代表成功，可以下单</span></span><br></pre></td></tr></table></figure><h1 id="滑动窗口限流"><a href="#滑动窗口限流" class="headerlink" title="滑动窗口限流"></a>滑动窗口限流</h1>]]>
     </content>
     <id>http://xiaom68.com/2026/05/17/%E9%BB%91%E9%A9%AC%E7%82%B9%E8%AF%84%E4%B8%AA%E4%BA%BA%E9%9D%A2%E8%AF%95%E6%80%BB%E7%BB%93/</id>
     <link href="http://xiaom68.com/2026/05/17/%E9%BB%91%E9%A9%AC%E7%82%B9%E8%AF%84%E4%B8%AA%E4%BA%BA%E9%9D%A2%E8%AF%95%E6%80%BB%E7%BB%93/"/>
     <published>2026-05-17T01:51:28.000Z</published>
     <summary>
-      <![CDATA[<p>#秒杀防超卖和一人一单 </p>]]>
+      <![CDATA[<h1 id="秒杀防超卖和一人一单"><a href="#秒杀防超卖和一人一单" class="headerlink" title="秒杀防超卖和一人一单"></a>秒杀防超卖和一人一单</h1><p>    首先使用 <strong>redis</strong> 存储库存和订]]>
     </summary>
     <title>黑马点评个人面试总结</title>
-    <updated>2026-05-17T01:56:47.731Z</updated>
+    <updated>2026-05-17T02:49:39.838Z</updated>
   </entry>
 </feed>
